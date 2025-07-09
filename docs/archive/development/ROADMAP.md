@@ -95,7 +95,7 @@ This document works in conjunction with [INSTRUCTIONS.md](./INSTRUCTIONS.md), wh
 
 **Current Status** (as of 2025-06-29):
 - ✅ **46/46 test files pass** (100% pass rate)
-- ✅ **476/498 tests pass** (95.6% pass rate, 22 skipped for API integration)
+- ✅ **482/498 tests pass** (96.8% pass rate, 16 skipped for API integration)
 - ✅ **Zero test failures** - all critical functionality working
 - ✅ **Vitest framework implemented** with comprehensive configuration
 - ✅ **Coverage exclusions configured** (docs, scripts, prompts excluded)
