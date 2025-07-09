@@ -145,7 +145,7 @@ gh api repos/OWNER/REPO/milestones --method POST \
   --field state='open'
 
 # Assign issue to milestone
-gh issue edit ISSUE_NUMBER --milestone 'Phase 1: Foundation'
+aitrackdown issue update ISS-001 --milestone 'Phase 1: Foundation'
 ```
 
 ### Milestone Guidelines
@@ -270,10 +270,10 @@ gh api repos/OWNER/REPO/milestones/NUMBER --method PATCH \
   --field state='closed'
 
 # Assign issue to milestone
-gh issue edit ISSUE_NUMBER --milestone 'Milestone Name'
+aitrackdown issue update ISS-001 --milestone 'Milestone Name'
 
 # List issues in milestone
-gh issue list --milestone 'Milestone Name'
+aitrackdown issue list --milestone 'Milestone Name'
 ```
 
 ### Milestone States
@@ -295,20 +295,20 @@ gh issue list --milestone 'Milestone Name'
 
 ```bash
 # Create new issue
-gh issue create --title "Issue title" --body "Description" --label "type:feature"
+aitrackdown issue create --title "Issue title" --body "Description" --priority medium --epic "EP-001"
 
 # List issues
-gh issue list --state open
-gh issue list --milestone "Phase 1"
-gh issue list --label "prio:high"
+aitrackdown issue list --status open
+aitrackdown issue list --milestone "Phase 1"
+aitrackdown issue list --priority high
 
 # Edit issue
-gh issue edit NUMBER --title "New title"
-gh issue edit NUMBER --milestone "Phase 1"
-gh issue edit NUMBER --add-label "status:in-progress"
+aitrackdown issue update ISS-001 --title "New title"
+aitrackdown issue update ISS-001 --milestone "Phase 1"
+aitrackdown issue update ISS-001 --status in_progress
 
 # Close issue
-gh issue close NUMBER --comment "Completed in PR #123"
+aitrackdown issue complete ISS-001 --comment "Completed in PR #123"
 ```
 
 ---
