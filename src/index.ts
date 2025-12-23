@@ -448,8 +448,18 @@ async function main() {
     const [provider, model] = config.selectedModel.split(':');
     console.log(`Using ${provider} API with model: ${model}`);
 
+    // Skip validation when using custom base URL (proxy) or when explicitly requested
+    const hasCustomBaseUrl = !!process.env.AI_CODE_REVIEW_OPENAI_BASE_URL ||
+      !!process.env.AI_CODE_REVIEW_ANTHROPIC_BASE_URL ||
+      !!process.env.AI_CODE_REVIEW_GEMINI_BASE_URL ||
+      !!process.env.AI_CODE_REVIEW_OPENROUTER_BASE_URL;
+
     const shouldSkipValidation =
-      args.skipKeyCheck || projectConfig?.preferences?.skip_validation || false;
+      args.skipKeyCheck || projectConfig?.preferences?.skip_validation || hasCustomBaseUrl || false;
+
+    if (hasCustomBaseUrl) {
+      logger.info('Custom base URL detected - skipping API key validation (proxy mode)');
+    }
 
     if (!shouldSkipValidation) {
       logger.debug('Performing API key validation...');

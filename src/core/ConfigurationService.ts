@@ -414,7 +414,7 @@ export class ConfigurationService {
     return {
       debug:
         cliOptions?.debug ??
-        process.env.AI_CODE_REVIEW_DEBUG === 'true' ??
+        (process.env.AI_CODE_REVIEW_DEBUG ? process.env.AI_CODE_REVIEW_DEBUG === 'true' : undefined) ??
         configFile?.behavior?.debug ??
         configFile?.system?.debug ??
         false,
@@ -428,7 +428,7 @@ export class ConfigurationService {
 
       interactive:
         cliOptions?.interactive ??
-        process.env.AI_CODE_REVIEW_INTERACTIVE === 'true' ??
+        (process.env.AI_CODE_REVIEW_INTERACTIVE ? process.env.AI_CODE_REVIEW_INTERACTIVE === 'true' : undefined) ??
         configFile?.behavior?.interactive ??
         configFile?.review?.interactive ??
         false,
@@ -445,28 +445,28 @@ export class ConfigurationService {
     return {
       includeTests:
         cliOptions?.includeTests ??
-        process.env.AI_CODE_REVIEW_INCLUDE_TESTS === 'true' ??
+        (process.env.AI_CODE_REVIEW_INCLUDE_TESTS ? process.env.AI_CODE_REVIEW_INCLUDE_TESTS === 'true' : undefined) ??
         configFile?.features?.include_tests ??
         configFile?.review?.include_tests ??
         false,
 
       includeProjectDocs:
         cliOptions?.includeProjectDocs ??
-        process.env.AI_CODE_REVIEW_INCLUDE_PROJECT_DOCS === 'true' ??
+        (process.env.AI_CODE_REVIEW_INCLUDE_PROJECT_DOCS ? process.env.AI_CODE_REVIEW_INCLUDE_PROJECT_DOCS === 'true' : undefined) ??
         configFile?.features?.include_project_docs ??
         configFile?.review?.include_project_docs ??
         true,
 
       includeDependencyAnalysis:
         cliOptions?.includeDependencyAnalysis ??
-        process.env.AI_CODE_REVIEW_INCLUDE_DEPENDENCY_ANALYSIS === 'true' ??
+        (process.env.AI_CODE_REVIEW_INCLUDE_DEPENDENCY_ANALYSIS ? process.env.AI_CODE_REVIEW_INCLUDE_DEPENDENCY_ANALYSIS === 'true' : undefined) ??
         configFile?.features?.include_dependency_analysis ??
         configFile?.review?.include_dependency_analysis ??
         true,
 
       enableSemanticChunking:
         cliOptions?.enableSemanticChunking ??
-        process.env.AI_CODE_REVIEW_ENABLE_SEMANTIC_CHUNKING === 'true' ??
+        (process.env.AI_CODE_REVIEW_ENABLE_SEMANTIC_CHUNKING ? process.env.AI_CODE_REVIEW_ENABLE_SEMANTIC_CHUNKING === 'true' : undefined) ??
         configFile?.features?.enable_semantic_chunking ??
         true,
     };
@@ -482,13 +482,13 @@ export class ConfigurationService {
     return {
       multiPass:
         cliOptions?.multiPass ??
-        process.env.AI_CODE_REVIEW_MULTI_PASS === 'true' ??
+        (process.env.AI_CODE_REVIEW_MULTI_PASS ? process.env.AI_CODE_REVIEW_MULTI_PASS === 'true' : undefined) ??
         configFile?.features?.multi_pass ??
         false,
 
       forceSinglePass:
         cliOptions?.forceSinglePass ??
-        process.env.AI_CODE_REVIEW_FORCE_SINGLE_PASS === 'true' ??
+        (process.env.AI_CODE_REVIEW_FORCE_SINGLE_PASS ? process.env.AI_CODE_REVIEW_FORCE_SINGLE_PASS === 'true' : undefined) ??
         configFile?.features?.force_single_pass ??
         false,
 
@@ -509,15 +509,15 @@ export class ConfigurationService {
     return {
       testApi:
         cliOptions?.testApi ??
-        process.env.AI_CODE_REVIEW_TEST_API === 'true' ??
+        (process.env.AI_CODE_REVIEW_TEST_API ? process.env.AI_CODE_REVIEW_TEST_API === 'true' : undefined) ??
         configFile?.api?.test_api ??
         false,
 
-      estimate: cliOptions?.estimate ?? process.env.AI_CODE_REVIEW_ESTIMATE === 'true' ?? false,
+      estimate: cliOptions?.estimate ?? (process.env.AI_CODE_REVIEW_ESTIMATE ? process.env.AI_CODE_REVIEW_ESTIMATE === 'true' : undefined) ?? false,
 
       noConfirm:
         cliOptions?.noConfirm ??
-        process.env.AI_CODE_REVIEW_NO_CONFIRM === 'true' ??
+        (process.env.AI_CODE_REVIEW_NO_CONFIRM ? process.env.AI_CODE_REVIEW_NO_CONFIRM === 'true' : undefined) ??
         !(configFile?.review?.confirm ?? true),
     };
   }

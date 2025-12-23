@@ -197,6 +197,27 @@ ${consolidationPrompt}`;
           ],
         };
 
+        // Get base URL - use custom if set (for proxy support), otherwise use default OpenAI URL
+        const customBaseUrl = process.env.AI_CODE_REVIEW_OPENAI_BASE_URL;
+
+        // When using proxy, format model name with actual provider prefix for routing
+        let apiModelName = modelName;
+        if (customBaseUrl) {
+          // Detect actual provider from model name pattern and format for proxy
+          if (modelName.startsWith('claude-')) {
+            apiModelName = `anthropic/${modelName}`;
+          } else if (modelName.startsWith('gpt-') || modelName.startsWith('o1') || modelName.startsWith('o3')) {
+            apiModelName = `openai/${modelName}`;
+          } else if (modelName.startsWith('gemini-')) {
+            apiModelName = `google/${modelName}`;
+          } else if (modelName.startsWith('qwen')) {
+            apiModelName = `alibaba/${modelName}`;
+          }
+          // Otherwise keep original model name
+          logger.info(`[CONSOLIDATION] Using proxy model name: ${apiModelName}`);
+          requestBody.model = apiModelName;
+        }
+
         // Add appropriate max tokens parameter based on model
         // Use higher token limits for consolidation since it needs to generate comprehensive reports
         const consolidationMaxTokens = 12000; // Higher limit for consolidation
@@ -208,6 +229,17 @@ ${consolidationPrompt}`;
         }
 
         logger.debug('[CONSOLIDATION] Making direct OpenAI API call with custom prompts');
+        let consolidationEndpoint: string;
+
+        if (customBaseUrl) {
+          // Use custom base URL (e.g., for CLIProxyAPI)
+          consolidationEndpoint = customBaseUrl.endsWith('/chat/completions')
+            ? customBaseUrl
+            : `${customBaseUrl.replace(/\/+$/, '')}/chat/completions`;
+          logger.info(`[CONSOLIDATION] Using custom base URL: ${consolidationEndpoint}`);
+        } else {
+          consolidationEndpoint = 'https://api.openai.com/v1/chat/completions';
+        }
 
         // Retry logic for API calls with JSON validation
         let retryCount = 0;
@@ -216,7 +248,7 @@ ${consolidationPrompt}`;
 
         while (retryCount < maxRetries && !data) {
           try {
-            const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+            const response = await fetchWithRetry(consolidationEndpoint, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

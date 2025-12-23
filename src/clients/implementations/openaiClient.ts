@@ -36,6 +36,7 @@ const MAX_TOKENS_PER_REQUEST = 4000;
  */
 export class OpenAIClient extends AbstractClient {
   protected apiKey: string | undefined;
+  protected baseUrl: string;
 
   /**
    * Initialize with default values
@@ -45,6 +46,17 @@ export class OpenAIClient extends AbstractClient {
     this.modelName = '';
     this.isInitialized = false;
     this.apiKey = process.env.AI_CODE_REVIEW_OPENAI_API_KEY;
+    // Support custom base URL for proxies like CLIProxyAPI
+    const customBaseUrl = process.env.AI_CODE_REVIEW_OPENAI_BASE_URL;
+    if (customBaseUrl) {
+      // Ensure the URL ends with /chat/completions
+      this.baseUrl = customBaseUrl.endsWith('/chat/completions')
+        ? customBaseUrl
+        : customBaseUrl.replace(/\/$/, '') + '/chat/completions';
+      logger.info(`OpenAI client using custom base URL: ${this.baseUrl}`);
+    } else {
+      this.baseUrl = 'https://api.openai.com/v1/chat/completions';
+    }
   }
 
   /**
@@ -266,7 +278,8 @@ REMEMBER TO ALWAYS INCLUDE THE "grade" AND "gradeCategories" FIELDS, which provi
         const requestBody = this.applyModelConfiguration(baseRequestBody);
 
         // Make the API request
-        const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+        logger.debug(`OpenAI API request to: ${this.baseUrl}`);
+        const response = await fetchWithRetry(this.baseUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -427,7 +440,8 @@ REMEMBER TO ALWAYS INCLUDE THE "grade" AND "gradeCategories" FIELDS, which provi
         const requestBody = this.applyModelConfiguration(baseRequestBody);
 
         // Make the API request
-        const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+        logger.debug(`OpenAI API request to: ${this.baseUrl}`);
+        const response = await fetchWithRetry(this.baseUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -593,7 +607,8 @@ Always include a dedicated "Dependency Security Analysis" section in your review
           const initialRequestBody = this.applyModelConfiguration(baseInitialRequestBody);
 
           // Make the initial request with tools
-          response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+          logger.debug(`OpenAI API request to: ${this.baseUrl}`);
+          response = await fetchWithRetry(this.baseUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -657,8 +672,9 @@ ESSENTIAL TASK: Include a dedicated "Dependency Security Analysis" section in yo
             const finalRequestBody = this.applyModelConfiguration(baseFinalRequestBody);
 
             // Make the final request
+            logger.debug(`OpenAI API request to: ${this.baseUrl}`);
             const finalResponse = await fetchWithRetry(
-              'https://api.openai.com/v1/chat/completions',
+              this.baseUrl,
               {
                 method: 'POST',
                 headers: {
@@ -703,7 +719,8 @@ ESSENTIAL TASK: Include a dedicated "Dependency Security Analysis" section in yo
           // Apply model configuration
           const requestBody = this.applyModelConfiguration(baseRequestBody);
 
-          response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+          logger.debug(`OpenAI API request to: ${this.baseUrl}`);
+          response = await fetchWithRetry(this.baseUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

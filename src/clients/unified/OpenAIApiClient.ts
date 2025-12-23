@@ -39,7 +39,10 @@ export class OpenAIApiClient extends BaseApiClient {
       }
     }
 
-    const isSupported = provider === 'openai' || this.isOpenAIModel(model);
+    // When a custom base URL is configured (e.g., for proxies like CLIProxyAPI),
+    // accept any model name since the proxy handles model routing
+    const hasCustomBaseUrl = !!this.config.baseUrl;
+    const isSupported = hasCustomBaseUrl || provider === 'openai' || this.isOpenAIModel(model);
 
     return {
       isSupported,
@@ -68,9 +71,12 @@ export class OpenAIApiClient extends BaseApiClient {
         throw new Error('OpenAI SDK not installed. Please run: npm install openai');
       }
 
+      const baseURL = this.config.baseUrl || undefined;
+      logger.info(`OpenAI SDK config: baseURL=${baseURL || 'default'}, model=${this.config.modelName}`);
+
       this.openai = new OpenAI({
         apiKey: this.config.apiKey,
-        baseURL: this.config.baseUrl,
+        baseURL: baseURL,
         timeout: this.config.timeout || 30000,
       });
 

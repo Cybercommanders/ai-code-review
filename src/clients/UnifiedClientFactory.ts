@@ -78,11 +78,14 @@ export class UnifiedClientFactory {
     }
 
     // Create client configuration
+    const baseUrl = options?.baseUrl || UnifiedClientFactory.getBaseUrl(provider);
+    logger.info(`UnifiedClientFactory: Creating ${provider} client with baseUrl=${baseUrl || 'default'}`);
+
     const clientConfig: ApiClientConfig = {
       apiKey: UnifiedClientFactory.getApiKey(provider),
       modelName: model,
       provider,
-      baseUrl: options?.baseUrl,
+      baseUrl: baseUrl,
       timeout: options?.timeout || 30000,
       rateLimit: options?.rateLimit,
     };
@@ -225,6 +228,28 @@ export class UnifiedClientFactory {
     }
 
     return apiKey;
+  }
+
+  /**
+   * Get the optional base URL for a provider (for custom endpoints/proxies)
+   * @param provider The provider name
+   * @returns The base URL or undefined if not configured
+   */
+  private static getBaseUrl(provider: string): string | undefined {
+    const envVarMap: Record<string, string> = {
+      openai: 'AI_CODE_REVIEW_OPENAI_BASE_URL',
+      anthropic: 'AI_CODE_REVIEW_ANTHROPIC_BASE_URL',
+      gemini: 'AI_CODE_REVIEW_GEMINI_BASE_URL',
+      google: 'AI_CODE_REVIEW_GEMINI_BASE_URL',
+      openrouter: 'AI_CODE_REVIEW_OPENROUTER_BASE_URL',
+    };
+
+    const envVar = envVarMap[provider.toLowerCase()];
+    if (!envVar) {
+      return undefined;
+    }
+
+    return process.env[envVar] || undefined;
   }
 
   /**
